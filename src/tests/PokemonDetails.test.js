@@ -30,12 +30,20 @@ describe('Teste o componente <PokemonDetails.js />', () => {
       { name: `Game Locations of ${name}`, level: 2 });
     expect(textLocation).toBeInTheDocument();
 
-    foundAt.forEach((local) => {
-      const localName = screen.getByText(local.location);
-      expect(localName).toBeInTheDocument();
-      const localImg = screen.getAllByRole('img');
-      const isMapDisplayed = localImg.some((img) => img.src === local.map);
-      expect(isMapDisplayed).toBe(true);
+    const locationOnCard = screen.getAllByAltText(`${name} location`);
+    const srcOnCard = locationOnCard.map((location) => location.src);
+    foundAt.forEach((locationFromData) => {
+      expect(srcOnCard).toContain(locationFromData.map);
+
+      const locationName = screen.getByText(`${locationFromData.location}`);
+      expect(locationName).toBeInTheDocument();
+
+      const locationImage = locationOnCard.find(
+        (location) => location.src === locationFromData.map,
+      );
+      expect(locationImage).toBeInTheDocument();
+      expect(locationImage).toHaveAttribute('src', `${locationFromData.map}`);
+      expect(locationImage).toHaveAttribute('alt', `${name} location`);
     });
   });
 
